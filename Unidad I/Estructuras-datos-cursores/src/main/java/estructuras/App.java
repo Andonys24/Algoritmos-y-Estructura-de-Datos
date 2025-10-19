@@ -6,118 +6,92 @@ import estructuras.tda.Pila;
 
 public class App {
     public static void main(String[] args) {
-        try {
-            probarLista();
-            probarPila();
-            probarCola();
-        } catch (Exception e) {
-            System.err.println("Error durante las pruebas: " + e.getMessage());
-            e.printStackTrace();
+
+        Utilidades.imprimirTitulo("Prueba de Palabra Palindroma");
+        Lista<Character> palabra1 = new Lista<>();
+        String test1 = "anilina";
+
+        for (char c : test1.toCharArray()) {
+            palabra1.INSERTA(c, palabra1.FIN());
+        }
+
+        System.out.println("¿'" + test1 + "' es palindromo? " + esPalindromo(palabra1));
+
+        Lista<Character> palabra2 = new Lista<>();
+        String test2 = "radar";
+
+        for (char c : test2.toCharArray()) {
+            palabra2.INSERTA(c, palabra2.FIN());
+        }
+
+        System.out.println("¿'" + test2 + "' es palindromo? " + esPalindromo(palabra2));
+
+        Lista<Character> palabra3 = new Lista<>();
+        String test3 = "hola";
+
+        for (char c : test3.toCharArray()) {
+            palabra3.INSERTA(c, palabra3.FIN());
+        }
+
+        System.out.println("¿'" + test3 + "' es palindromo? " + esPalindromo(palabra3));
+
+        Utilidades.imprimirTitulo("Prueba de Invertir Lista con una Cola");
+        Lista<Integer> numeros = new Lista<>();
+        numeros.INSERTA(1, numeros.FIN());
+        numeros.INSERTA(2, numeros.FIN());
+        numeros.INSERTA(3, numeros.FIN());
+        numeros.INSERTA(4, numeros.FIN());
+        numeros.INSERTA(5, numeros.FIN());
+        numeros.imprimir();
+
+        invertirListaConCola(numeros);
+
+        numeros.imprimir();
+    }
+
+    private static boolean esPalindromo(Lista<Character> lista) {
+        // Validación inicial
+        if (lista == null || lista.VACIA()) {
+            return false;
+        }
+
+        Pila<Character> pila = new Pila<>();
+        int indice = 1;
+
+        // Primera pasada: llenar la pila
+        while (indice < lista.FIN()) {
+            pila.METE(lista.RECUPERA(indice));
+            indice++;
+        }
+
+        // Segunda pasada: comparar mientras la pila no esté vacia
+        indice = 1;
+        while (!pila.VACIA()) {
+            if (Character.toLowerCase(lista.RECUPERA(indice)) != Character.toLowerCase(pila.SACA())) {
+                return false;
+            }
+            indice++;
+        }
+
+        return true;
+    }
+
+    // Invierte una Lista usando exclusivamente una Cola (in-place)
+    public static <T> void invertirListaConCola(Lista<T> lista) {
+        if (lista == null || lista.VACIA())
+            return;
+
+        Cola<T> cola = new Cola<>(lista.getTamano());
+
+        // Mover todos los elementos a la cola (preserva orden original en la cola)
+        while (!lista.VACIA()) {
+            cola.poneEnCola(lista.SUPRIME(lista.PRIMERO()));
+        }
+
+        // Reconstruir la lista insertando siempre al inicio => queda invertida
+        while (!cola.VACIA()) {
+            lista.INSERTA(cola.quitaDeCola(), lista.PRIMERO());
         }
     }
 
-    private static void probarLista() {
-        System.out.println("----- PRUEBAS DE LA LISTA -----");
-        Lista<String> lista = new Lista<>();
-
-        System.out.println("Lista vacía:");
-        lista.imprimir();
-
-        // Agregar elementos
-        System.out.println("\nAgregando elementos:");
-        lista.INSERTA("A", lista.FIN());
-        lista.INSERTA("B", lista.FIN());
-        lista.INSERTA("C", lista.FIN());
-        lista.INSERTA("D", 2);
-        lista.imprimir();
-
-        // Recuperar y localizar
-        System.out.println("\nRecuperando el elemento en la posición 3: " + lista.RECUPERA(3));
-        System.out.println("Localizando el elemento 'C': " + lista.LOCALIZA("C"));
-        System.out.println("Localizando el elemento 'X': " + lista.LOCALIZA("X"));
-
-        // Eliminar elementos
-        System.out.println("\nEliminando el primer elemento:");
-        lista.SUPRIME(lista.PRIMERO());
-        lista.imprimir();
-
-        System.out.println("\nEliminando el tercer elemento:");
-        lista.SUPRIME(3);
-        lista.imprimir();
-
-        System.out.println("\nAnulando la lista:");
-        lista.ANULA();
-        lista.imprimir();
-
-        System.out.println("\n-------------------------------------------");
-    }
-
-    private static void probarPila() {
-        System.out.println("----- PRUEBAS DE LA PILA -----");
-        Pila<Integer> pila = new Pila<>();
-
-        System.out.println("Pila vacía? " + pila.VACIA());
-
-        System.out.println("\nAgregando elementos a la pila...");
-        pila.METE(10);
-        pila.METE(20);
-        pila.METE(30);
-
-        System.out.println("\nPila original:");
-        pila.imprimir();
-
-        System.out.println("\nPila invertida:");
-        pila = Utilidades.invertirPila(pila);
-        pila.imprimir();
-
-        System.out.println("El elemento en el TOPE es: " + pila.TOPE());
-
-        System.out.println("Sacando un elemento: " + pila.SACA());
-        pila.imprimir();
-
-        System.out.println("\nMetemos 40 en la pila:");
-        pila.METE(40);
-        pila.imprimir();
-
-        System.out.println("\nAnulando la pila:");
-        pila.ANULA();
-        pila.imprimir();
-        System.out.println("Pila vacía? " + pila.VACIA());
-
-        System.out.println("\n-------------------------------------------");
-    }
-
-    private static void probarCola() {
-        System.out.println("----- PRUEBAS DE LA COLA -----");
-        Cola<Character> cola = new Cola<>();
-
-        System.out.println("Cola vacía? " + cola.VACIA());
-
-        System.out.println("\nAgregando elementos a la cola...");
-        cola.poneEnCola('A');
-        cola.poneEnCola('B');
-        cola.poneEnCola('C');
-        cola.poneEnCola('D');
-
-        System.out.println("\nCola original:");
-        cola.imprimir();
-
-        System.out.println("El elemento en el FRENTE es: " + cola.FRENTE());
-
-        System.out.println("Sacando un elemento: " + cola.quitaDeCola());
-        cola.imprimir();
-
-        System.out.println("\nMetemos 'F' en la cola:");
-        cola.poneEnCola('F');
-        cola.imprimir();
-
-        System.out.println("El elemento en el FRENTE es: " + cola.FRENTE());
-
-        System.out.println("\nAnulando la Cola:");
-        cola.ANULA();
-        cola.imprimir();
-        System.out.println("Cola vacía? " + cola.VACIA());
-
-        System.out.println("\n-------------------------------------------");
-    }
 }
